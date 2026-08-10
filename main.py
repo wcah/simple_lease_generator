@@ -24,13 +24,15 @@ else:
 left, right = st.columns([1, 1])
 
 with left:
-    st.subheader(
-        "Fill Placeholders",
-        help=(
-            "Each box is pre-filled with its placeholder token; "
-            "edit the ones you want to replace and leave the rest as-is."
-        ),
-    )
+    title_col, download_col = st.columns([3, 1])
+    with title_col:
+        st.subheader(
+            "Fill Placeholders",
+            help=(
+                "Each box is pre-filled with its placeholder token; "
+                "edit the ones you want to replace and leave the rest as-is."
+            ),
+        )
 
     placeholders = find_placeholders(doc)
 
@@ -48,21 +50,21 @@ with left:
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
+    buffer = io.BytesIO()
+    write_docx(doc, buffer)
+    buffer.seek(0)
+    with download_col:
+        st.download_button(
+            label="Fill All & Download",
+            data=buffer,
+            file_name="filled_output.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+
 with right:
     st.subheader("Document Preview")
     preview_html = get_text(doc).replace("\n", "<br>")
     st.markdown(
         f'<div style="height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap;">{preview_html}</div>',
         unsafe_allow_html=True,
-    )
-
-    st.subheader("Download")
-    buffer = io.BytesIO()
-    write_docx(doc, buffer)
-    buffer.seek(0)
-    st.download_button(
-        label="Fill All & Download",
-        data=buffer,
-        file_name="filled_output.docx",
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
