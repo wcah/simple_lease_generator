@@ -1,7 +1,6 @@
 import io
 import streamlit as st
-from docx_utils import read_docx, get_text, write_docx, replace_placeholder
-from xlsx_utils import read_xlsx_to_dict
+from docx_utils import read_docx, get_text, write_docx, replace_placeholder, find_placeholders
 
 st.title("DOCX Form Filler")
 st.subheader("For full documentation:\nhttps://github.com/wcah/docx_template_filler")
@@ -16,27 +15,29 @@ if docx_file:
     with left:
         st.subheader("Fill Placeholders")
 
-        method = st.radio("Replacement method", ["Manual", "Upload .xlsx"])
+        placeholders = find_placeholders(doc)
 
-        if method == "Manual":
+        if placeholders:
+            st.caption("Enter a value for each placeholder found in the document.")
+            values = {
+                placeholder: st.text_input(f"${placeholder}", key=f"placeholder_{placeholder}")
+                for placeholder in placeholders
+            }
+
+            if st.button("Fill All"):
+                for placeholder, value in values.items():
+                    replace_placeholder(doc, placeholder, value)
+                st.success("All placeholders replaced.")
+        else:
+            st.info("No $PLACEHOLDER tokens were found in this document.")
+
+        with st.expander("Replace a single placeholder manually"):
             placeholder = st.text_input("Placeholder name (without $)")
             replacement = st.text_input("Replace with")
 
             if st.button("Replace") and placeholder:
                 replace_placeholder(doc, placeholder, replacement)
                 st.success(f"Replaced ${placeholder.upper()} with '{replacement}'")
-
-        else:
-            xlsx_file = st.file_uploader("Upload .xlsx (column 1 = placeholders, column 2 = values)", type=["xlsx"])
-
-            if xlsx_file:
-                replacements = read_xlsx_to_dict(io.BytesIO(xlsx_file.read()))
-                st.write("Replacements found:", replacements)
-
-                if st.button("Fill All"):
-                    for placeholder, value in replacements.items():
-                        replace_placeholder(doc, placeholder, value)
-                    st.success("All placeholders replaced.")
 
         st.subheader("Download")
         buffer = io.BytesIO()

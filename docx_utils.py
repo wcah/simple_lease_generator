@@ -1,8 +1,10 @@
 import io
+import re
 
 from docx import Document as Doc
 from docx.document import Document
 
+PLACEHOLDER_PATTERN = re.compile(r"\$([A-Za-z][A-Za-z0-9_]*)")
 
 
 def read_docx(source: str | io.BytesIO) -> Document:
@@ -11,6 +13,13 @@ def read_docx(source: str | io.BytesIO) -> Document:
 
 def get_text(doc: Document) -> str:
     return "\n".join(para.text for para in doc.paragraphs)
+
+
+def find_placeholders(doc: Document) -> list[str]:
+    found = set()
+    for para in doc.paragraphs:
+        found.update(match.upper() for match in PLACEHOLDER_PATTERN.findall(para.text))
+    return sorted(found)
 
 
 def write_docx(doc: Document, target: str | io.BytesIO, source_path: str | None = None) -> None:

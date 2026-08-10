@@ -1,12 +1,12 @@
 # docx_template_filler
 
-A Streamlit web app that fills placeholders in `.docx` templates using values from an `.xlsx` spreadsheet or from user input.
+A Streamlit web app that fills placeholders in `.docx` templates using values entered directly in the app.
 
 ## How It Works
 
 1. Upload a `.docx` template containing `\$PLACEHOLDER` tokens
-2. Upload an `.xlsx` file with two columns: placeholder names (without the \$) (col 1) and replacement values (col 2)
-2a. Alternatively enter placeholder tokens (without the \$) and target values by hand.
+2. The app scans the document and shows a text input for each placeholder it finds; fill in a value for each and click "Fill All"
+2a. Alternatively, expand "Replace a single placeholder manually" to replace one token at a time by hand.
 3. Download the filled document with all formatting preserved
 
 ## Setup
