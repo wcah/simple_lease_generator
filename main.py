@@ -65,6 +65,6 @@ with right:
     st.subheader("Document Preview")
     preview_html = get_text(doc).replace("\n", "<br>")
     st.markdown(
-        f'<div style="height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap;">{preview_html}</div>',
+        f'<div style="height: calc(100vh - 420px); min-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap;">{preview_html}</div>',
         unsafe_allow_html=True,
     )
