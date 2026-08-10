@@ -18,9 +18,14 @@ if docx_file:
         placeholders = find_placeholders(doc)
 
         if placeholders:
-            st.caption("Enter a value for each placeholder found in the document.")
+            st.caption(
+                "Each box is pre-filled with its placeholder token; "
+                "edit the ones you want to replace and leave the rest as-is."
+            )
             values = {
-                placeholder: st.text_input(f"${placeholder}", key=f"placeholder_{placeholder}")
+                placeholder: st.text_input(
+                    f"${placeholder}", value=f"${placeholder}", key=f"placeholder_{placeholder}"
+                )
                 for placeholder in placeholders
             }
 
