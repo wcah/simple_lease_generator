@@ -8,8 +8,7 @@ DEFAULT_TEMPLATE_PATH = Path(__file__).parent / "lease_template.docx"
 
 st.set_page_config(layout="wide")
 
-st.title("Simple Lease Generator")
-st.subheader("[Full documentation](https://github.com/wcah/simple_lease_generator)")
+st.title("Simple Lease Generator - [full documentation](https://github.com/wcah/simple_lease_generator)")
 
 docx_file = st.file_uploader(
     "Upload a .docx template (optional — defaults to the built-in lease template)",
@@ -41,7 +40,7 @@ with left:
         for i, placeholder in enumerate(placeholders):
             with col_a if i % 2 == 0 else col_b:
                 values[placeholder] = st.text_input(
-                    f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
+                    f"{placeholder}", placeholder=f"{placeholder}", key=f"placeholder_{placeholder}"
                 )
 
         for placeholder, value in values.items():
