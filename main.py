@@ -23,15 +23,17 @@ else:
 left, right = st.columns([1, 1])
 
 with left:
-    st.subheader("Fill Placeholders")
+    st.subheader(
+        "Fill Placeholders",
+        help=(
+            "Each box is pre-filled with its placeholder token; "
+            "edit the ones you want to replace and leave the rest as-is."
+        ),
+    )
 
     placeholders = find_placeholders(doc)
 
     if placeholders:
-        st.caption(
-            "Each box is pre-filled with its placeholder token; "
-            "edit the ones you want to replace and leave the rest as-is."
-        )
         values = {
             placeholder: st.text_input(
                 f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
@@ -39,10 +41,8 @@ with left:
             for placeholder in placeholders
         }
 
-        if st.button("Fill All"):
-            for placeholder, value in values.items():
-                replace_placeholder(doc, placeholder, value)
-            st.success("All placeholders replaced.")
+        for placeholder, value in values.items():
+            replace_placeholder(doc, placeholder, value)
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
@@ -59,7 +59,7 @@ with right:
     write_docx(doc, buffer)
     buffer.seek(0)
     st.download_button(
-        label="Download filled .docx",
+        label="Fill All & Download",
         data=buffer,
         file_name="filled_output.docx",
         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
