@@ -2,6 +2,8 @@ import io
 from pathlib import Path
 
 import streamlit as st
+from st_keyup import st_keyup
+
 from docx_utils import read_docx, get_text, write_docx, replace_placeholder, find_placeholders
 
 DEFAULT_TEMPLATE_PATH = Path(__file__).parent / "lease_template.docx"
@@ -41,12 +43,15 @@ with left:
         col_a, col_b = st.columns(2)
         for i, placeholder in enumerate(placeholders):
             with col_a if i % 2 == 0 else col_b:
-                values[placeholder] = st.text_input(
-                    f"{placeholder}", placeholder=f"{placeholder}", key=f"placeholder_{placeholder}"
+                values[placeholder] = st_keyup(
+                    f"{placeholder}",
+                    placeholder=f"{placeholder}",
+                    key=f"placeholder_{placeholder}",
+                    debounce=250,
                 )
 
         for placeholder, value in values.items():
-            replace_placeholder(doc, placeholder, value)
+            replace_placeholder(doc, placeholder, value or "")
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
