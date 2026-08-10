@@ -46,13 +46,13 @@ with left:
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
-    with st.expander("Replace a single placeholder manually"):
-        placeholder = st.text_input("Placeholder name (e.g. LANDLORD_NAME)")
-        replacement = st.text_input("Replace with")
-
-        if st.button("Replace") and placeholder:
-            replace_placeholder(doc, placeholder, replacement)
-            st.success(f"Replaced [[{placeholder.upper()}]] with '{replacement}'")
+with right:
+    st.subheader("Document Preview")
+    preview_html = get_text(doc).replace("\n", "<br>")
+    st.markdown(
+        f'<div style="height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap;">{preview_html}</div>',
+        unsafe_allow_html=True,
+    )
 
     st.subheader("Download")
     buffer = io.BytesIO()
@@ -63,12 +63,4 @@ with left:
         data=buffer,
         file_name="filled_output.docx",
         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    )
-
-with right:
-    st.subheader("Document Preview")
-    preview_html = get_text(doc).replace("\n", "<br>")
-    st.markdown(
-        f'<div style="height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 1rem; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap;">{preview_html}</div>',
-        unsafe_allow_html=True,
     )
