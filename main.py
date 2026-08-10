@@ -6,6 +6,8 @@ from docx_utils import read_docx, get_text, write_docx, replace_placeholder, fin
 
 DEFAULT_TEMPLATE_PATH = Path(__file__).parent / "lease_template.docx"
 
+st.set_page_config(layout="wide")
+
 st.title("Simple Lease Generator")
 st.subheader("[Full documentation](https://github.com/wcah/simple_lease_generator)")
 
@@ -34,12 +36,13 @@ with left:
     placeholders = find_placeholders(doc)
 
     if placeholders:
-        values = {
-            placeholder: st.text_input(
-                f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
-            )
-            for placeholder in placeholders
-        }
+        values = {}
+        col_a, col_b = st.columns(2)
+        for i, placeholder in enumerate(placeholders):
+            with col_a if i % 2 == 0 else col_b:
+                values[placeholder] = st.text_input(
+                    f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
+                )
 
         for placeholder, value in values.items():
             replace_placeholder(doc, placeholder, value)
