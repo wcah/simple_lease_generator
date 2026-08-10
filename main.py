@@ -4,6 +4,8 @@ from pathlib import Path
 import streamlit as st
 from docx_utils import read_docx, get_text, write_docx, replace_placeholder, find_placeholders
 
+DEFAULT_TEMPLATE_PATH = Path(__file__).parent / "lease_template.docx"
+
 st.title("Simple Lease Generator")
 st.subheader("[Full documentation](https://github.com/wcah/simple_lease_generator)")
 
