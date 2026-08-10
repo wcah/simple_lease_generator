@@ -34,7 +34,7 @@ with left:
         )
         values = {
             placeholder: st.text_input(
-                f"[[{placeholder}]]", value=f"[[{placeholder}]]", key=f"placeholder_{placeholder}"
+                f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
             )
             for placeholder in placeholders
         }
