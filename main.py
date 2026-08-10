@@ -6,6 +6,8 @@ from docx_utils import read_docx, get_text, write_docx, replace_placeholder, fin
 
 DEFAULT_TEMPLATE_PATH = Path(__file__).parent / "lease_template.docx"
 
+st.set_page_config(layout="wide")
+
 st.title("Simple Lease Generator")
 st.subheader("[Full documentation](https://github.com/wcah/simple_lease_generator)")
 
@@ -23,26 +25,27 @@ else:
 left, right = st.columns([1, 1])
 
 with left:
-    st.subheader("Fill Placeholders")
+    st.subheader(
+        "Fill Placeholders",
+        help=(
+            "Each box is pre-filled with its placeholder token; "
+            "edit the ones you want to replace and leave the rest as-is."
+        ),
+    )
 
     placeholders = find_placeholders(doc)
 
     if placeholders:
-        st.caption(
-            "Each box is pre-filled with its placeholder token; "
-            "edit the ones you want to replace and leave the rest as-is."
-        )
-        values = {
-            placeholder: st.text_input(
-                f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
-            )
-            for placeholder in placeholders
-        }
+        values = {}
+        col_a, col_b = st.columns(2)
+        for i, placeholder in enumerate(placeholders):
+            with col_a if i % 2 == 0 else col_b:
+                values[placeholder] = st.text_input(
+                    f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
+                )
 
-        if st.button("Fill All"):
-            for placeholder, value in values.items():
-                replace_placeholder(doc, placeholder, value)
-            st.success("All placeholders replaced.")
+        for placeholder, value in values.items():
+            replace_placeholder(doc, placeholder, value)
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
@@ -59,7 +62,7 @@ with right:
     write_docx(doc, buffer)
     buffer.seek(0)
     st.download_button(
-        label="Download filled .docx",
+        label="Fill All & Download",
         data=buffer,
         file_name="filled_output.docx",
         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
