@@ -2,8 +2,8 @@ import io
 import streamlit as st
 from docx_utils import read_docx, get_text, write_docx, replace_placeholder, find_placeholders
 
-st.title("DOCX Form Filler")
-st.subheader("For full documentation:\nhttps://github.com/wcah/docx_template_filler")
+st.title("Simple Lease Generator")
+st.subheader("[Full documentation](https://github.com/wcah/simple_lease_generator)")
 
 docx_file = st.file_uploader("Upload a .docx template", type=["docx"])
 
@@ -24,7 +24,7 @@ if docx_file:
             )
             values = {
                 placeholder: st.text_input(
-                    f"${placeholder}", value=f"${placeholder}", key=f"placeholder_{placeholder}"
+                    f"{placeholder}", value=f"{placeholder}", key=f"placeholder_{placeholder}"
                 )
                 for placeholder in placeholders
             }
@@ -34,15 +34,8 @@ if docx_file:
                     replace_placeholder(doc, placeholder, value)
                 st.success("All placeholders replaced.")
         else:
-            st.info("No $PLACEHOLDER tokens were found in this document.")
+            st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
-        with st.expander("Replace a single placeholder manually"):
-            placeholder = st.text_input("Placeholder name (without $)")
-            replacement = st.text_input("Replace with")
-
-            if st.button("Replace") and placeholder:
-                replace_placeholder(doc, placeholder, replacement)
-                st.success(f"Replaced ${placeholder.upper()} with '{replacement}'")
 
         st.subheader("Download")
         buffer = io.BytesIO()
