@@ -24,7 +24,7 @@ if docx_file:
             )
             values = {
                 placeholder: st.text_input(
-                    f"${placeholder}", value=f"${placeholder}", key=f"placeholder_{placeholder}"
+                    f"[[{placeholder}]]", value=f"[[{placeholder}]]", key=f"placeholder_{placeholder}"
                 )
                 for placeholder in placeholders
             }
@@ -34,15 +34,15 @@ if docx_file:
                     replace_placeholder(doc, placeholder, value)
                 st.success("All placeholders replaced.")
         else:
-            st.info("No $PLACEHOLDER tokens were found in this document.")
+            st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
         with st.expander("Replace a single placeholder manually"):
-            placeholder = st.text_input("Placeholder name (without $)")
+            placeholder = st.text_input("Placeholder name (e.g. LANDLORD_NAME)")
             replacement = st.text_input("Replace with")
 
             if st.button("Replace") and placeholder:
                 replace_placeholder(doc, placeholder, replacement)
-                st.success(f"Replaced ${placeholder.upper()} with '{replacement}'")
+                st.success(f"Replaced [[{placeholder.upper()}]] with '{replacement}'")
 
         st.subheader("Download")
         buffer = io.BytesIO()
