@@ -1,4 +1,5 @@
 import io
+import json
 from pathlib import Path
 
 import streamlit as st
@@ -52,6 +53,14 @@ with left:
 
         for placeholder, value in values.items():
             replace_placeholder(doc, placeholder, value or "")
+
+        st.download_button(
+            label="Export Fields",
+            data=json.dumps({placeholder: value or "" for placeholder, value in values.items()}, indent=2),
+            file_name="fields.json",
+            mime="application/json",
+            help="Download a JSON file mapping each placeholder name to its currently entered value.",
+        )
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
