@@ -69,16 +69,12 @@ with left:
             )
 
         with import_col:
-            with st.popover(
+            imported_file = st.file_uploader(
                 "Import Fields",
+                type=["json"],
+                key="import_fields_uploader",
                 help="Upload a JSON file previously exported with Export Fields to refill these boxes.",
-            ):
-                imported_file = st.file_uploader(
-                    "Upload a fields.json file",
-                    type=["json"],
-                    key="import_fields_uploader",
-                    help="The file must map placeholder names to values, as produced by Export Fields.",
-                )
+            )
 
         if imported_file is not None and st.session_state.get("last_imported_file_id") != imported_file.file_id:
             st.session_state["last_imported_file_id"] = imported_file.file_id
