@@ -40,27 +40,56 @@ with left:
     placeholders = find_placeholders(doc)
 
     if placeholders:
+        import_version = st.session_state.get("import_version", 0)
+        imported_values = st.session_state.get("imported_values", {})
+
         values = {}
         col_a, col_b = st.columns(2)
         for i, placeholder in enumerate(placeholders):
             with col_a if i % 2 == 0 else col_b:
                 values[placeholder] = st_keyup(
                     f"{placeholder}",
+                    value=imported_values.get(placeholder, ""),
                     placeholder=f"{placeholder}",
-                    key=f"placeholder_{placeholder}",
+                    key=f"placeholder_{placeholder}_{import_version}",
                     debounce=250,
                 )
 
         for placeholder, value in values.items():
             replace_placeholder(doc, placeholder, value or "")
 
-        st.download_button(
-            label="Export Fields",
-            data=json.dumps({placeholder: value or "" for placeholder, value in values.items()}, indent=2),
-            file_name="fields.json",
-            mime="application/json",
-            help="Download a JSON file mapping each placeholder name to its currently entered value.",
-        )
+        export_col, import_col = st.columns(2)
+        with export_col:
+            st.download_button(
+                label="Export Fields",
+                data=json.dumps({placeholder: value or "" for placeholder, value in values.items()}, indent=2),
+                file_name="fields.json",
+                mime="application/json",
+                help="Download a JSON file mapping each placeholder name to its currently entered value.",
+            )
+
+        with import_col:
+            with st.popover(
+                "Import Fields",
+                help="Upload a JSON file previously exported with Export Fields to refill these boxes.",
+            ):
+                imported_file = st.file_uploader(
+                    "Upload a fields.json file",
+                    type=["json"],
+                    key="import_fields_uploader",
+                    help="The file must map placeholder names to values, as produced by Export Fields.",
+                )
+
+        if imported_file is not None and st.session_state.get("last_imported_file_id") != imported_file.file_id:
+            st.session_state["last_imported_file_id"] = imported_file.file_id
+            try:
+                new_values = json.loads(imported_file.read())
+            except json.JSONDecodeError:
+                st.error("Could not parse the uploaded file as JSON.")
+            else:
+                st.session_state["imported_values"] = new_values
+                st.session_state["import_version"] = import_version + 1
+                st.rerun()
     else:
         st.info("No [[PLACEHOLDER]] tokens were found in this document.")
 
